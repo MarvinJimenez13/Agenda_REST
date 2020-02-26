@@ -6,8 +6,17 @@ package com.unamis.modelos;
  */
 public class Admin {
     
+    private int idAdmin;
     private String nombre, contrasena;
     private int tipoAdmin;
+
+    public int getIdAdmin() {
+        return idAdmin;
+    }
+
+    public void setIdAdmin(int idAdmin) {
+        this.idAdmin = idAdmin;
+    }
 
     public String getNombre() {
         return nombre;

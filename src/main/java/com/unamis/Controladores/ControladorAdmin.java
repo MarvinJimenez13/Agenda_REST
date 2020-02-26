@@ -27,14 +27,15 @@ public class ControladorAdmin {
             
             try{
                 
-                PreparedStatement consulta  = conectar.prepareStatement("SELECT * FROM admins WHERE nombre = ? AND contrasena = ?");
+                PreparedStatement consulta  = conectar.prepareStatement("SELECT * FROM admins WHERE usuario = ? AND contrasena = ?");
                 consulta.setString(1 , nombre);
                 consulta.setString(2, contrasena);
                 ResultSet resultado = consulta.executeQuery();
                 
                 if(resultado.next()){
                     
-                    admin.setNombre(resultado.getString("nombre"));
+                    admin.setIdAdmin(resultado.getInt("idadmins"));
+                    admin.setNombre(resultado.getString("usuario"));
                     admin.setTipoAdmin(resultado.getInt("tipoAdmin"));
                     adminRegistrado = true;
                     
