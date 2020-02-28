@@ -21,7 +21,7 @@ import org.json.simple.parser.ParseException;
 @Path("/admin")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class LoginREST {
+public class AdminREST {
     
     private JSONParser parser = new JSONParser();
     private ControladorAdmin admin = new ControladorAdmin();
