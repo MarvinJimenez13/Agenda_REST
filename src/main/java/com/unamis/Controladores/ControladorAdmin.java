@@ -1,5 +1,6 @@
 package com.unamis.Controladores;
 
+import com.google.gson.Gson;
 import com.unamis.modelos.Admin;
 import com.unamis.mysql.ConexionMySQL;
 import java.sql.Connection;
@@ -15,8 +16,10 @@ import org.json.simple.JSONObject;
 public class ControladorAdmin {
     
     private Admin admin = new Admin();
+    private Admin admins[];
     private ConexionMySQL mysql = new ConexionMySQL();
     private Connection conectar;
+    private Gson gson = new Gson();
     private boolean adminRegistrado = false;
     
     public void iniciarSesion(String nombre, String contrasena){
@@ -27,7 +30,7 @@ public class ControladorAdmin {
             
             try{
                 
-                PreparedStatement consulta  = conectar.prepareStatement("SELECT * FROM admins WHERE usuario = ? AND contrasena = ?");
+                PreparedStatement consulta  = conectar.prepareStatement("SELECT * FROM admins WHERE BINARY usuario = ? AND BINARY contrasena = ?");
                 consulta.setString(1 , nombre);
                 consulta.setString(2, contrasena);
                 ResultSet resultado = consulta.executeQuery();
@@ -113,5 +116,137 @@ public class ControladorAdmin {
         }
         
     }//Fin método registrar.
+    
+    public void actualizar(JSONObject jsonDatos){
+        
+        String query = "";
+        
+        admin = new Admin();
+        admin.setIdAdmin(Integer.parseInt(jsonDatos.get("idAdmin").toString()));
+        admin.setNombre(jsonDatos.get("nombre").toString());
+        admin.setTipoAdmin(Integer.parseInt(jsonDatos.get("tipoAdmin").toString()));
+        if(jsonDatos.containsKey("contrasena")){
+            
+            admin.setContrasena(jsonDatos.get("contrasena").toString());
+            query = "UPDATE admins SET usuario = '" + admin.getNombre() + "', tipoAdmin = " + admin.getTipoAdmin() + ", "
+                    + "contrasena = '" + admin.getContrasena() + "' WHERE idadmins = " + admin.getIdAdmin();
+            
+        }else{
+            
+            query = "UPDATE admins SET usuario = '" + admin.getNombre() + "', tipoAdmin = " + admin.getTipoAdmin()
+                    + "  WHERE idadmins = " + admin.getIdAdmin();
+            
+            
+        }
+        conectar = mysql.conectar();
+        
+        if(conectar != null){
+            
+            try{
+                
+                PreparedStatement update = conectar.prepareStatement(query);
+                update.execute();
+                conectar.close();
+                
+            }catch(SQLException ex){
+                
+                ex.printStackTrace();
+                
+            }
+            
+        }else{
+            
+            System.out.println("Error en actualizar.");
+            
+        }
+        
+    }//Fin método actualizar.
+    
+    public String obtenerUsuarios(){
+        
+        String arrayJSON = "";
+        
+        conectar = mysql.conectar();
+        
+        if(conectar != null){
+            
+            try{
+                
+                PreparedStatement consulta = conectar.prepareStatement("SELECT COUNT(*) AS registros FROM admins");
+                ResultSet resultado = consulta.executeQuery();
+                
+                if(resultado.next()){
+                    
+                    int registros = resultado.getInt("registros");
+                    admins = new Admin[registros];
+                    
+                    int aux = 0;
+                    
+                    PreparedStatement consulta2 = conectar.prepareStatement("SELECT * FROM admins");
+                    ResultSet resultado2 = consulta2.executeQuery();
+                    
+                    while(resultado2.next()){
+                        
+                        admin = new Admin();
+                        admin.setIdAdmin(resultado2.getInt("idadmins"));
+                        admin.setNombre(resultado2.getString("usuario"));
+                        admin.setTipoAdmin(resultado2.getInt("tipoAdmin"));
+                        admins[aux] = admin;
+                        aux++;
+                        
+                    }
+                    
+                }
+                
+                conectar.close();
+                
+            }catch(SQLException ex){
+                
+                ex.printStackTrace();
+                
+            }
+            
+        }else{
+            
+            System.out.println("Error en obtenerUsuarios.");
+            
+        }
+        
+        arrayJSON = gson.toJson(admins);
+        
+        return arrayJSON;
+        
+    }//Fin método obtenerUsuarios.
+    
+    public void eliminar(JSONObject jsonDatos){
+        
+        admin = new Admin();
+        admin.setIdAdmin(Integer.parseInt(jsonDatos.get("idAdmin").toString()));
+        
+        conectar = mysql.conectar();
+        
+        if(conectar != null){
+            
+            try{
+                
+                PreparedStatement eliminar = conectar.prepareStatement("DELETE FROM admins WHERE idadmins = ?");
+                eliminar.setInt(1 , admin.getIdAdmin());
+                eliminar.execute();
+                conectar.close();
+            
+                
+            }catch(SQLException ex){
+                
+                ex.printStackTrace();
+                
+            }
+            
+        }else{
+            
+            System.out.println("Error en la conexion en Eliminar.");
+            
+        }
+        
+    }//Fin método eliminar.
     
 }
