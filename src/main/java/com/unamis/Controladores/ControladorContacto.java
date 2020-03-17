@@ -5,6 +5,7 @@ import com.unamis.modelos.Contacto;
 import com.unamis.mysql.ConexionMySQL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.json.simple.JSONObject;
 
@@ -18,6 +19,7 @@ public class ControladorContacto {
     private Connection conectar;
     private Gson gson = new Gson();
     private Contacto contacto = new Contacto();
+    private Contacto contactos[];
     
     public void nuevoContacto(JSONObject jsonContacto){
         
@@ -72,5 +74,67 @@ public class ControladorContacto {
         }
         
     }//Fin método registrarContacto.
+    
+    public String obtenerContactos(){
+        
+        String jsonArray = "";
+        conectar = mysql.conectar();
+        
+        if(conectar != null){
+            
+            try{
+                
+                PreparedStatement obtenerRegistros = conectar.prepareStatement("SELECT COUNT(*) AS registros FROM contactos");
+                ResultSet resultadoRegistros = obtenerRegistros.executeQuery();
+                
+                if(resultadoRegistros.next()){
+                    
+                    contactos = new Contacto[resultadoRegistros.getInt("registros")];
+                    PreparedStatement obtenerContactos = conectar.prepareStatement("SELECT * FROM contactos");
+                    ResultSet resultadoContactos = obtenerContactos.executeQuery();
+                    
+                    int aux = 0;
+                    
+                    while(resultadoContactos.next()){
+                        
+                        Contacto contacto = new Contacto();
+                        contacto.setIdContacto(resultadoContactos.getInt("idcontactos"));
+                        contacto.setIdAdmin(resultadoContactos.getInt("admins_idadmins"));
+                        contacto.setNombre(resultadoContactos.getString("nombre"));
+                        contacto.setApellidos(resultadoContactos.getString("apellidos"));
+                        contacto.setNumeroCelular(resultadoContactos.getString("numeroCelular"));
+                        contacto.setAvenida(resultadoContactos.getString("avenida"));
+                        contacto.setColonia(resultadoContactos.getString("colonia"));
+                        contacto.setEstado(resultadoContactos.getString("estado"));
+                        contacto.setPais(resultadoContactos.getString("pais"));
+                        contacto.setComentario(resultadoContactos.getString("comentario"));
+                        contacto.setFechaRegistro(resultadoContactos.getDate("fechaRegistro"));
+                        contacto.setLugarComun(resultadoContactos.getString("lugarComun"));
+                        contactos[aux] = contacto;
+                        aux++;
+                        
+                    }
+                    
+                }
+                
+                conectar.close();
+                
+            }catch(SQLException ex){
+                
+                ex.printStackTrace();
+                
+            }
+            
+        }else{
+            
+            System.out.println("Error en obtenerContactos.");
+            
+        }
+        
+        jsonArray = gson.toJson(contactos);
+        
+        return jsonArray;
+        
+    }//Fin método obtenerContactos.
     
 }

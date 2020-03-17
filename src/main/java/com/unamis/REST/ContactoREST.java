@@ -2,6 +2,7 @@ package com.unamis.REST;
 
 import com.unamis.Controladores.ControladorContacto;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,5 +32,15 @@ public class ContactoREST {
         return Response.ok("Contacto Registrado.", MediaType.APPLICATION_JSON).build();
         
     }//Fin método registrarCOntacto.
+    
+    @GET
+    @Path("/obtenerContactos")
+    public String obtenerContactos(){
+        
+        String jsonArray = "{\"contactos\":" + contacto.obtenerContactos() + "}";
+        
+        return jsonArray;
+        
+    }
     
 }
