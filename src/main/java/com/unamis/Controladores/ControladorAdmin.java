@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
  *
  * @author Marvin
  */
+
 public class ControladorAdmin {
     
     private Admin admin = new Admin();
