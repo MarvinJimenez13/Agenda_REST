@@ -90,7 +90,7 @@ public class ControladorContacto {
                 if(resultadoRegistros.next()){
                     
                     contactos = new Contacto[resultadoRegistros.getInt("registros")];
-                    PreparedStatement obtenerContactos = conectar.prepareStatement("SELECT * FROM contactos");
+                    PreparedStatement obtenerContactos = conectar.prepareStatement("SELECT * FROM contactos INNER JOIN admins WHERE admins.idadmins = contactos.admins_idadmins");
                     ResultSet resultadoContactos = obtenerContactos.executeQuery();
                     
                     int aux = 0;
@@ -100,6 +100,7 @@ public class ControladorContacto {
                         Contacto contacto = new Contacto();
                         contacto.setIdContacto(resultadoContactos.getInt("idcontactos"));
                         contacto.setIdAdmin(resultadoContactos.getInt("admins_idadmins"));
+                        contacto.setAdminRegistro(resultadoContactos.getString("usuario"));
                         contacto.setNombre(resultadoContactos.getString("nombre"));
                         contacto.setApellidos(resultadoContactos.getString("apellidos"));
                         contacto.setNumeroCelular(resultadoContactos.getString("numeroCelular"));

@@ -9,8 +9,16 @@ import java.sql.Date;
 public class Contacto {
     
     private int idContacto, idAdmin;
-    private String nombre, apellidos, numeroCelular, lugarComun, avenida, colonia, estado, pais, comentario;
+    private String nombre, apellidos, numeroCelular, lugarComun, avenida, colonia, estado, pais, comentario, adminRegistro;
     private java.sql.Date fechaRegistro;
+
+    public String getAdminRegistro() {
+        return adminRegistro;
+    }
+
+    public void setAdminRegistro(String adminRegistro) {
+        this.adminRegistro = adminRegistro;
+    }
 
     public int getIdContacto() {
         return idContacto;

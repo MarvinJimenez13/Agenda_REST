@@ -219,8 +219,9 @@ public class ControladorAdmin {
         
     }//Fin método obtenerUsuarios.
     
-    public void eliminar(JSONObject jsonDatos){
+    public boolean eliminar(JSONObject jsonDatos){
         
+        boolean eliminado = false;
         admin = new Admin();
         admin.setIdAdmin(Integer.parseInt(jsonDatos.get("idAdmin").toString()));
         
@@ -234,11 +235,12 @@ public class ControladorAdmin {
                 eliminar.setInt(1 , admin.getIdAdmin());
                 eliminar.execute();
                 conectar.close();
-            
+                eliminado = true;
                 
             }catch(SQLException ex){
                 
                 ex.printStackTrace();
+                eliminado = false;
                 
             }
             
@@ -247,6 +249,8 @@ public class ControladorAdmin {
             System.out.println("Error en la conexion en Eliminar.");
             
         }
+        
+        return eliminado;
         
     }//Fin método eliminar.
     

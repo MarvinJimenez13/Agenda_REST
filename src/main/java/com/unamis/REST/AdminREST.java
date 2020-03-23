@@ -83,9 +83,10 @@ public class AdminREST {
     @Path("/eliminar")
     public Response eliminar(JSONObject jsonDatos){
         
-        admin.eliminar(jsonDatos);
-        
-        return Response.ok("Usuario Eliminado", MediaType.APPLICATION_JSON).build();
+        if(admin.eliminar(jsonDatos))
+            return Response.ok("Usuario Eliminado", MediaType.APPLICATION_JSON).build();
+        else
+            return Response.ok("No se puede eliminar el Usuario, tiene contactos registrados.", MediaType.APPLICATION_JSON).build();
         
     }//Fin método eliminar.
     
