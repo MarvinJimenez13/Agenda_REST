@@ -138,4 +138,63 @@ public class ControladorContacto {
         
     }//Fin método obtenerContactos.
     
+    public void actualizarContacto(JSONObject jsonDatos){
+        
+        conectar = mysql.conectar();
+        if(conectar != null){
+            
+            try{          
+                
+                PreparedStatement actualizar = conectar.prepareStatement("UPDATE contactos SET nombre = ?, apellidos = ?, numeroCelular = ?, avenida = ?, colonia = ?, estado = ?, "
+                        + "pais = ?, comentario = ?, lugarComun = ? WHERE idcontactos = ?");
+                actualizar.setString(1 , jsonDatos.get("nombre").toString());
+                actualizar.setString(2 , jsonDatos.get("apellidos").toString());
+                actualizar.setString(3 , jsonDatos.get("numeroCelular").toString());
+                actualizar.setString(4 , jsonDatos.get("avenida").toString());
+                actualizar.setString(5 , jsonDatos.get("colonia").toString());
+                actualizar.setString(6 , jsonDatos.get("estado").toString());
+                actualizar.setString(7 , jsonDatos.get("pais").toString());
+                actualizar.setString(8 , jsonDatos.get("comentario").toString());
+                actualizar.setString(9 , jsonDatos.get("lugarComun").toString());
+                actualizar.setInt(10 , Integer.parseInt(jsonDatos.get("idContacto").toString()));
+                actualizar.execute();
+                conectar.close();
+                
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
+            
+        }else{
+            
+            System.out.println("Error en actualizarContacto.");
+            
+        }
+        
+    }//Fin método actualizarContacto.
+    
+    public void eliminarContacto(JSONObject jsonDatos){
+        
+        conectar = mysql.conectar();
+        
+        if(conectar != null){
+            
+            try{
+                
+                PreparedStatement eliminar = conectar.prepareStatement("DELETE FROM contactos WHERE idcontactos = ?");
+                eliminar.setInt(1, Integer.parseInt(jsonDatos.get("idContacto").toString()));
+                eliminar.execute();
+                conectar.close();
+                
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
+            
+        }else{
+            
+            System.out.println("Error en eliminarContacto.");
+            
+        }
+        
+    }//Fin método eliminarContacto.
+    
 }
